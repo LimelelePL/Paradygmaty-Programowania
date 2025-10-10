@@ -1,0 +1,1 @@
+let isPalindrome list = list = List.rev list (*nie bylo na wykladzie*)
