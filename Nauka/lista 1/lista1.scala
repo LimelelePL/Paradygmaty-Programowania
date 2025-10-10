@@ -21,7 +21,18 @@ println(hits ( List(1,2,3), List(1,2,4) ) )
 
 /*3) Napisać funkcję insert przyjmującą listę, nowy element oraz pozycję, na którą ma on być
 wstawiony i zwracającą nową listę zawierającą wstawiany element. Jeśli pozycja jest poza
-zakresem, element należy wstawić na odpowiednim końcu listy. (OCaml i Scala) (10pkt.)
+zakresem, element należy wstawić na odpowiednim końcu listy. (OCaml i Scala) (10pkt.) */
+
+def insert [A] (l : List[A], elem : A, pos: Int) : List[A] = {
+  if l.isEmpty then elem :: l
+  else if pos>0 then l.head :: insert (l.tail, elem, pos-1)
+  else elem :: l //pos dochodzi do zera i mozemy skladac liste na nowo 
+}
+
+val list = insert(List(1,2,3,4,5), 10, 3)
+print (list.toString())
+
+/*
 4) Napisać funkcję militaryMinutes przyjmującą trójkę wartości: dwie liczby reprezentujące
 godzinę i minuty w systemie 12-o godzinnym oraz łańcuch znaków zawierający porę dnia –
 „AM” / „PM”, i zwracającą napis zawierający tę godzinę w systemie 24-o godzinnym postaci:
