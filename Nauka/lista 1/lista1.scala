@@ -39,6 +39,24 @@ godzinę i minuty w systemie 12-o godzinnym oraz łańcuch znaków zawierający 
 „HH : MM”. W razie błędu rzucić wyjątek z odpowiednim komunikatem tekstowym. (OCaml i
 Scala) (20pkt.)
 */
+
+def militaryMinutes (godzina : Int, minuta: Int, pora : String ): String = {
+
+  if godzina > 12 || godzina <0 then throw new IllegalArgumentException("Nieprawidlowa godzina")
+  
+  val godzinaPM ={
+     if(godzina + 12) >= 24 then godzina - 12
+     else godzina + 12
+     }
+  
+  if (pora == "AM") then s" $godzina : $minuta" 
+  else if (pora == "PM") then s" $godzinaPM : $minuta"
+  else throw new IllegalArgumentException("nieprawidlowa godzina lub pora")
+} 
+
+val t = militaryMinutes(12, 30, "PM")
+print(t)
+
 }
 
 
