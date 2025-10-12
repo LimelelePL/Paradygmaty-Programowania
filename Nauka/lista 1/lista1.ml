@@ -28,3 +28,30 @@ let militaryMinutes (hour, minute, str) =
 
 let te = militaryMinutes(12, 30, "PM") ;;
 
+(*[OCAML] Napisz funkcję zwracającą wszystkie liczby pierwsze z podanego przez parametr
+funkcji zakresu(może być krotka o dwóch wartościach). – 3 pkt. (2+1)*)
+
+let isPrime(a) =
+if a <= 0 then false 
+else if (a = 1) || (a = 2) then true
+else let rec check (iter) =
+      if iter = a then true
+      else if a mod iter = 0 then false
+      else check(iter+1)
+  in check 2 ;;
+
+let rec allPrime (a, b) =
+  if a > b then []
+  else if isPrime a then a :: allPrime (a + 1, b)
+  else allPrime (a + 1, b);;
+
+
+let v = allPrime(0,10);;
+let print_int_list l =
+  List.iter (fun x -> print_int x; print_string " ") l;
+  print_newline ();;
+
+print_newline;;
+print_int_list v;;
+
+  
