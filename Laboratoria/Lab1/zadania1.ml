@@ -1,7 +1,7 @@
 (*zadanie 1*)
 let third (a,b,c) = c;;
 let test11 = third(1,2,"j");;
-(*let test12= third((1,4));; *)(*rzuci wyjatek*)
+(*let test12= third((1,4));;*)
 let test13 = third(([], [], []));;
 let test14 = third (true, 4.2, "ala");;
 
@@ -13,15 +13,15 @@ let rec sum list =
 
  let test31 = sum ([1.0;2.0;3.0;4.6;5.4]);;
  
-
- (*let test33 = sum(["a"; "b"]);; *) (*rzuci wyjatek*)
+ (*let test33 = sum(["a"; "b"]);; *)
  let test34 = sum [-1.5; 0.5; 1.0];;
 
  (*zadanie 4*)
 
  let rec lessThanNum (list, num) = 
   if list = [] then true
-  else List.hd list < num && lessThanNum(List.tl list, num);;
+  else if List.hd list >= num then false
+  else lessThanNum(List.tl list, num);;
 
   let test41 = lessThanNum([1;2;3;4;5], 6);;
   let test42 = lessThanNum( [], 0 );;

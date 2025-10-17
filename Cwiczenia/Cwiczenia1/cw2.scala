@@ -1,7 +1,7 @@
 object cw2 extends App {
 
 def count[A](elem: A, list: List[A]): Int = {
-  if list.length == 0 then 0 
+  if list == Nil then 0 
   else if list.head == elem then 1 + count(elem, list.tail)
   else count(elem, list.tail)
 }

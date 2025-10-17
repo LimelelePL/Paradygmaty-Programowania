@@ -1,13 +1,21 @@
-let isPalindrome list = 
-  list = List.rev list (*nie bylo na wykladzie*)
+let isPalindrome l =
+  let rec check (front, back) =
+    if back = [] then (true, front)
+    else
+      let (ok, front') = check (front ,(List.tl back)) in
+      if not ok then (false, front')
+      else if front' = [] then (true, front')
+      else
+        let first = List.hd front' in
+        let last = List.hd back in
+        (first = last, List.tl front')
+  in
+  fst (check (l, l))
 
 
-let listLength list = 
-  let rec iter (l, acc) =
-  match l with
-  | [] -> acc
-  |  _  -> iter(List.tl l, acc+1)
-in iter(list, 0);;
+let rec listLength list = 
+ if list = [] then 0
+ else 1 + listLength (List.tl list);;
 
 let len = listLength([1;2;3]);;
 print_int(len)
