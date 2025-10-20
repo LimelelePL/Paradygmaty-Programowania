@@ -1,11 +1,14 @@
+import scala.annotation.tailrec
 object zadanie extends App{
-  /*Napisz funkcję rekurencyjną przyjmującą dwa parametry: liczby całkowite. Funkcja na wyjściu ma
-generować uporządkowaną rosnąco listę wszystkich liczb całkowitych zaczynających się od liczby mniejszej
-i kończących się na liczbie większej.
- Przykład:
- wywołanie: genlist (4 8)
- wynik : [4;5;6;7;8]
- Punkty: 5 (jezyk Scala)
- */
 
+def length [A](list : List[A]) : Int = {
+  @tailrec
+  def iter [A] (list : List[A], count : Int) : Int ={
+  list match
+    case head :: tail => iter(tail, count+1)
+    case Nil => count
+  }
+  iter(list, 0)
+}
+  print(List(1,2,3,4).length)
 }
