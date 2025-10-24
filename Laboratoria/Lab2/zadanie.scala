@@ -10,5 +10,8 @@ def length [A](list : List[A]) : Int = {
   }
   iter(list, 0)
 }
-  print(List(1,2,3,4).length)
+  println(List(1,2,3,4).length)
+  println(List().length)
+  println(List( List(),List() ).length)
+  println(List( (),(),(),() ).length)
 }

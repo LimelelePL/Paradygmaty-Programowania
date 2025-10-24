@@ -5,8 +5,8 @@ let rec divideList list =
     | head :: tail ->
        let (even, odd) = divideList tail in
            (match head mod 2 with 
-            |0 -> (head :: even, odd)
-            |_ -> (even, head :: odd))
+            | 0 -> (head :: even, odd)
+            | _ -> (even, head :: odd))
     | [] -> ([],[]) ;;
 
 
@@ -20,31 +20,28 @@ let print_list printer lst =
   print_string "["; 
   aux lst;
   print_endline "]";;
-
-
-  
-  
   
   (*zadanie 1*)
 let rec reverse list =
   let rec iter (list, accum) =
     match list with
-    | h :: t -> iter (t, h :: accum)
-    | [] ->accum
+    | head :: tail -> iter (tail, head :: accum)
+    | [] -> accum
     in iter (list, []) ;;
 
 let rec divideListTail list =
-  let rec helper (xs, mp, p) =
+  let rec helper (xs, odd, even) =
     match xs with
-    | h :: t ->
-       if h mod 2 = 0 then helper (t,h :: mp, p)
-       else helper (t ,mp ,h :: p)
-    | [] -> (reverse mp, reverse p)
+    | head :: tail ->
+       if head mod 2 = 0 then helper (tail,  odd, head :: even)
+       else helper (tail, head :: odd,  even)
+    | [] -> (reverse even, reverse odd)
        in helper (list, [], []) ;;
 
 let divide1 = divideListTail [1;2;3;4;5;6];;
 let divide2 = divideListTail [];;
 let divide3 = divideListTail [1;1;1;1;1;1;1;1;1];;
+let divide4 = divideListTail [2;2;2;2;2;2;2;2;2];;
 
 (*zadanie 3*)
 let connect (list1, list2) = 
