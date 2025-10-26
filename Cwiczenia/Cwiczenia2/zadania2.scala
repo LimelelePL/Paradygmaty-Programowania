@@ -1,6 +1,18 @@
 import scala.annotation.tailrec
 import scala.compiletime.ops.double
 object zadania2 extends App {
+ /* zad 1
+ * Scala nie optymalizuje funkcji wzajemnie rekurencyjnych, dlatego mamy głebokość stosu równą 4
+evenR(3)
+→ oddR(2)
+→ evenR(1)
+→ oddR(0)
+→ false
+ * Natomiast Ocaml rozpoznaje funkcje wzajemnie rekurencyjne i optymalizuje je do rekurencji ogonowej, dlatego
+ * kompilator nie musi pamiętać poprzednich wywołań funkcji i stos ma głębokość 1
+ * 
+ */
+
   //zad2
   def normalFibonacci(n: Int) : Int = {
     if n==0 || n==1 then n
@@ -53,9 +65,10 @@ def initSegment[A](xs: List[A], ys: List[A]): Boolean = {
 
 //zad 6
 def replaceNth[A](xs: List[A], n: Int, x: A): List[A] = {
-    xs match {
-        case (Nil) => Nil
-        case (h1::t1) => if n!=0 then h1 :: replaceNth(t1, n-1, x) else x :: t1 
+    (xs, n) match {
+        case (Nil, _) => Nil
+        case (h1::t1, 0) => h1::t1
+        case (h1::t1, _) => h1::replaceNth(t1, n-1, x)
     }
 }
 
