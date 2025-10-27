@@ -1,35 +1,137 @@
-(*Napisz funkcję rekurencyjną ostatni_element, która zwraca ostatni element listy.*)
-let rec ostatniElement list =
-    if list = [] then raise(Failure "pusta lista")
-    else if List.tl list = [] then List.hd list
-    else ostatniElement(List.tl list);;
 
-let test = ostatniElement [1; 2; 3; 4] ;;
-Printf.printf "%d\n" test;;
+let apply f x = f x;;
+let t1 = apply (fun x-> 2*x) 2;;
 
-(*napisz funkcję, która rekurencyjnie oblicza sumę cyfr podanej liczby całkowitej*)
+let applyTwice f x = f (apply f x);;
+let t2 = applyTwice (fun x -> 2*x) 2 ;;
 
-let rec sumaLiczbyCalkowitej liczba =
-    if liczba = 0 then 0
-    else liczba mod 10 + sumaLiczbyCalkowitej((liczba/10));;
+let func1 x = 2*x;;
+let func2 x = 4*x;;
+let compose f g = fun x -> f (g x)
 
-let test2 = sumaLiczbyCalkowitej(129);;
-Printf.printf "%d\n" test2;;
+let rec my_filter pred xs = 
+    match xs with
+    | h::t  when pred h  -> h :: my_filter pred t 
+    | h::t ->  my_filter pred t
+    | [] -> [] ;;
 
-(*stwórz funkcje zastosujDwaRazy, która przyjmiuje jako argument funkcje f oraz wartość x i zwraca f(x)*)
+let t3 = my_filter (fun x -> x = 2) [2;2;5;5;3];;
 
-let zastosujDwaRazy f x = f(f x);;
-let podwoj x = 2*x;;
-let test3 = zastosujDwaRazy podwoj 3;;
-Printf.printf "%d\n" test3;;
+let rec my_fold_left f acc xs = 
+    match xs with
+    | h::t -> let acc' = f acc h in my_fold_left f acc' t 
+    | [] -> acc ;;
 
-(*Napisz funkcję, która przyjmuje krotkę zawierającą napis, 
-liczbę całkowitą i liczbę zmiennoprzecinkową, a następnie zwraca nową krotkę zawierającą:
-Długość napisu.
-Liczbę całkowitą powiększoną o część całkowitą liczby zmiennoprzecinkowej.
+let t4 =  my_fold_left (fun x acc -> acc + x ) 0 [1;2;3;4;5];;
+
+(*
+🔥 Poziom 3 — zabawa z wyższym rzędem
+7️⃣ Zrób funkcję, która zwraca inną funkcję
+(* addN : int -> (int -> int)
+   addN n zwraca funkcję, która dodaje n do swojego argumentu. *)
+
+let addN n = ...
+
+
+✅ Test:
+
+let add5 = addN 5;;
+add5 10;;  (* wynik: 15 *)
+(addN 2) 7;;  (* wynik: 9 *)
+
+8️⃣ Funkcja, która zwraca odwrotność predykatu
+(* negate : ('a -> bool) -> 'a -> bool *)
+let negate p = ...
+
+
+✅ Test:
+
+let isEven x = x mod 2 = 0;;
+let isOdd = negate isEven;;
+isOdd 3;;  (* true *)
+isOdd 4;;  (* false *)
+
+9️⃣ Funkcja, która zwraca funkcję warunkową
+(* choose : bool -> ('a -> 'a -> 'a)
+   jeśli true → zwróć funkcję wybierającą pierwszy argument
+   jeśli false → zwróć funkcję wybierającą drugi argument *)
+
+let choose cond = ...
+
+
+✅ Test:
+
+(choose true) 10 20;;   (* 10 *)
+(choose false) 10 20;;  (* 20 *)
+
+🧩 Poziom 4 — małe kombinacje
+🔟 Napisz map używając fold_right
+(* map_v2 : ('a -> 'b) -> 'a list -> 'b list *)
+let map_v2 f xs =
+  List.fold_right (fun x acc -> (f x) :: acc) xs [];;
 *)
 
-let przetworzKrotke (str, integer, float) = (String.length str, integer + int_of_float(float));;
-let test4 = przetworzKrotke("kupa", 2, 2.5);;
-let toString (a,b) = string_of_int a ^ " " ^ string_of_int b ;;
-print_string (toString test4);;
+
+(*🔥 Poziom 3 — zabawa z wyższym rzędem
+7️⃣ Zrób funkcję, która zwraca inną funkcję
+(* addN : int -> (int -> int)
+   addN n zwraca funkcję, która dodaje n do swojego argumentu. *)
+
+let addN n = ...
+
+
+✅ Test:
+
+let add5 = addN 5;;
+add5 10;;  (* wynik: 15 *)
+(addN 2) 7;;  (* wynik: 9 *) *)
+
+let addN n = fun x -> x + n;;
+let add5 = addN 5;;
+let test5 = add5 9;;
+
+(*8️ Funkcja, która zwraca odwrotność predykatu
+(* negate : ('a -> bool) -> 'a -> bool *)
+let negate p = ...
+
+
+ Test:
+
+let isEven x = x mod 2 = 0;;
+let isOdd = negate isEven;;
+isOdd 3;;  (* true *)
+isOdd 4;;  (* false *)
+*)
+
+let isEven x = x mod 2 = 0;;
+let negate p = fun x -> if p x then false else true;; 
+let isOdd =  negate isEven;;
+let x = isOdd 3;;
+
+(*
+9️⃣ Funkcja, która zwraca funkcję warunkową
+(* choose : bool -> ('a -> 'a -> 'a)
+   jeśli true → zwróć funkcję wybierającą pierwszy argument
+   jeśli false → zwróć funkcję wybierającą drugi argument *)
+
+let choose cond = ...
+
+
+✅ Test:
+
+(choose true) 10 20;;   (* 10 *)
+(choose false) 10 20;;  (* 20 *)
+*)
+
+let choose cond = if cond then fun a b -> a else fun a b -> b;;
+
+(choose true) 10 20;;
+(choose false) 10 20;;
+
+(*
+🧩 Poziom 4 — małe kombinacje
+🔟 Napisz map używając fold_right
+(* map_v2 : ('a -> 'b) -> 'a list -> 'b list *)*)
+
+let map_v2 f xs = List.fold_right (fun x acc -> (f x) :: acc) xs [];;
+
