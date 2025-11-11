@@ -4,6 +4,11 @@ object zadania2 extends App {
 
 /* Zadanie 1
 
+Głębkość stosu podczas wywołania funkcji rekurencyjnej zależy od tego
+ile razy funkcja wywołuje samą siebie, zanim osiągnie warunek bazowy (warunek zakończenia rekursji).
+Niektóre języki takie jak OCaml i Scala są w stanie zoptymalizować niektóre typy rekurencji - takie jak
+na przykład rekurencja ogonowa. 
+
 // OCaml
 
 OCaml jest językiem kompilowanym do kodu maszynowego:
@@ -19,9 +24,6 @@ let rec evenR n =
 and oddR n =
   if n = 0 then false
   else evenR (n - 1);;
-
-Przebieg teoretycznie jest taki sam:
-evenR(3) → oddR(2) → evenR(1) → oddR(0)
 
 Kompilator OCaml rozpoznaje wywołania w pozycji ogonowej (na końcu funkcji)
 i zastępuje je instrukcją jmp (skok bez odkładania niczego na stos) zamiast call 
@@ -57,17 +59,16 @@ def oddR(n: Int): Boolean =
 
 Prześledźmy działanie funkcji evenR(3) w Scali i głębokość stosu:
 
-    -> evenR(3)   -> stos 1
+    -> evenR(3)   -> stos 1 false
        n != 0
-    -> oddR(2)    -> stos 2
-       n != 0
-    -> evenR(1)   -> stos 3
-       n != 0
-    -> oddR(0)    -> stos 4
-       n == 0  -> zwraca false
+    -> oddR(2)    -> stos 2 false
+       n != 0 
+    -> evenR(1)   -> stos 3 false
+       n != 0     
+    -> oddR(0)    -> stos 4  false
+       n == 0  
 
-Następnie następuje zwijanie stosu i zwracane są kolejno wartości:
-false → false → true → true.
+      
 
 Scala działa na maszynie JVM, a kod jest tłumaczony do kodu bajtowego Javy.
 Maszyna JVM nie ma instrukcji typu „jump” pomiędzy metodami, więc nie może
@@ -97,7 +98,6 @@ do błędu StackOverflowError.
     else normalFibonacci(n-1) + normalFibonacci(n-2)
   }
 
- //wywolanie teog gowna https://www.youtube.com/watch?v=dxyYP3BSdcQ
 
   def tailFibonnaci(n:Int) : Int = {
     @annotation.tailrec
@@ -116,6 +116,27 @@ do błędu StackOverflowError.
   def root3(a:Double):Double = {
 
     val ep : Double = 1.0e-15
+    val x0 = if math.abs(a) >1 then a/3 else a
+    def accuracy (xi : Double) = Math.abs(xi * xi * xi - a) <= ep * Math.abs(a)
+    def next (xi : Double ) = xi + (a/(xi*xi) - xi )/3.0
+
+    @annotation.tailrec
+    def iter(result : Double):Double ={ 
+        if accuracy(result) then result
+        else iter(next(result))
+    }
+    iter(x0)
+  }
+
+    val sqr = root3(3.0)
+    println(sqr)
+
+
+
+val root3SF: Double => Double = (a: Double) => root3(a)
+  
+ val root3F: Double => Double = (a: Double) => { 
+   val ep : Double = 1.0e-15
     val x0 : Double = if math.abs(a)>1 then a/3 else a
     val accuracy: Double => Boolean = (xi : Double) => Math.abs(xi * xi * xi - a) <= ep * Math.abs(a)
     val res: Double => Double = (xi : Double ) => xi + (a/(xi*xi) - xi )/3.0
@@ -126,14 +147,23 @@ do błędu StackOverflowError.
         else iter(res(result))
     }
     iter(x0)
-  }
+    }
 
-    val sqr = root3(3.0)
-    println(sqr)
+//zad 4
+
+val List(_, _, a, _, _) = List(-2, -1, 0, 2, 2)
+
+val List(-2, _, b, 2, 2) = List(-2, -1, 0, 2, 2)
+
+val _ :: _ :: c :: _ :: _ :: Nil = List(-2, -1, 0, 2, 2)
+
+val List(_, d) = List((1,2), (0,1))
+
+val List((1,2), (e, _)) = List((1,2), (0,1))
+
 
 //zad 5
 def initSegment[A](xs: List[A], ys: List[A]): Boolean = {
-    if xs.isEmpty then true;
     (xs,ys) match {
      case (Nil, _) => true
      case (_, Nil) => false
@@ -141,7 +171,7 @@ def initSegment[A](xs: List[A], ys: List[A]): Boolean = {
     } 
 }
 
-
+val l = initSegment(List(1,2,3,4), List(1,2))
 
 //zad 6
 def replaceNth[A](xs: List[A], n: Int, x: A): List[A] = {

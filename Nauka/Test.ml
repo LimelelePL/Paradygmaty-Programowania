@@ -1,137 +1,47 @@
+let rec applyNTimes f x n = 
+    if n = 0 then x 
+    else applyNTimes f (f x) (n-1);;
 
-let apply f x = f x;;
-let t1 = apply (fun x-> 2*x) 2;;
+let z = applyNTimes (fun x-> x + x) 5 3;;
+         
 
-let applyTwice f x = f (apply f x);;
-let t2 = applyTwice (fun x -> 2*x) 2 ;;
-
-let func1 x = 2*x;;
-let func2 x = 4*x;;
-let compose f g = fun x -> f (g x)
-
-let rec my_filter pred xs = 
-    match xs with
-    | h::t  when pred h  -> h :: my_filter pred t 
-    | h::t ->  my_filter pred t
-    | [] -> [] ;;
-
-let t3 = my_filter (fun x -> x = 2) [2;2;5;5;3];;
-
-let rec my_fold_left f acc xs = 
-    match xs with
-    | h::t -> let acc' = f acc h in my_fold_left f acc' t 
-    | [] -> acc ;;
-
-let t4 =  my_fold_left (fun x acc -> acc + x ) 0 [1;2;3;4;5];;
-
-(*
-🔥 Poziom 3 — zabawa z wyższym rzędem
-7️⃣ Zrób funkcję, która zwraca inną funkcję
-(* addN : int -> (int -> int)
-   addN n zwraca funkcję, która dodaje n do swojego argumentu. *)
-
-let addN n = ...
+let map f xs = 
+   List.fold_right (fun x acc -> (f x) :: acc) xs [];;
 
 
-✅ Test:
+let t = List.fold_left (fun acc x -> acc ^ x) " " ["a";"b";"c";"d"];;
 
-let add5 = addN 5;;
-add5 10;;  (* wynik: 15 *)
-(addN 2) 7;;  (* wynik: 9 *)
+(*3️Napisz funkcję count(pred, xs)
 
-8️⃣ Funkcja, która zwraca odwrotność predykatu
-(* negate : ('a -> bool) -> 'a -> bool *)
-let negate p = ...
+która zlicza, ile elementów listy spełnia predykat pred.
+Przykład:
+count(x => x mod 2 == 0, [1;2;3;4;6]) → 3.*)
+let rec count pred xs = 
+    match xs with 
+    | head :: tail when pred head-> 1 + count pred tail
+    | head :: tail -> count pred tail
+    | [] -> 0;;
 
+let c = count (fun x -> x mod 2 = 0) [1;2;3;4;6];;
 
-✅ Test:
+(* Używając tylko map i filter, utwórz funkcję squaresOfEvens(xs)
 
-let isEven x = x mod 2 = 0;;
-let isOdd = negate isEven;;
-isOdd 3;;  (* true *)
-isOdd 4;;  (* false *)
+która zwraca kwadraty wszystkich liczb parzystych z listy xs.
+Przykład:
+squaresOfEvens([1;2;3;4;5]) → [4;16].*)
 
-9️⃣ Funkcja, która zwraca funkcję warunkową
-(* choose : bool -> ('a -> 'a -> 'a)
-   jeśli true → zwróć funkcję wybierającą pierwszy argument
-   jeśli false → zwróć funkcję wybierającą drugi argument *)
+let squaresOfEvens xs =
+    List.map (fun x -> x*x) (List.filter (fun x -> x mod 2 = 0) xs);;
 
-let choose cond = ...
+let k = squaresOfEvens[1;2;3;4;5];;
 
+(*Napisz funkcję concatLists(xss)
 
-✅ Test:
+która spłaszcza listę list (czyli [[1;2];[3];[4;5]] → [1;2;3;4;5])
+– ale nie używaj operatora @ ani List.concat.
+Wykorzystaj fold_left. *)
 
-(choose true) 10 20;;   (* 10 *)
-(choose false) 10 20;;  (* 20 *)
-
-🧩 Poziom 4 — małe kombinacje
-🔟 Napisz map używając fold_right
-(* map_v2 : ('a -> 'b) -> 'a list -> 'b list *)
-let map_v2 f xs =
-  List.fold_right (fun x acc -> (f x) :: acc) xs [];;
-*)
-
-
-(*🔥 Poziom 3 — zabawa z wyższym rzędem
-7️⃣ Zrób funkcję, która zwraca inną funkcję
-(* addN : int -> (int -> int)
-   addN n zwraca funkcję, która dodaje n do swojego argumentu. *)
-
-let addN n = ...
-
-
-✅ Test:
-
-let add5 = addN 5;;
-add5 10;;  (* wynik: 15 *)
-(addN 2) 7;;  (* wynik: 9 *) *)
-
-let addN n = fun x -> x + n;;
-let add5 = addN 5;;
-let test5 = add5 9;;
-
-(*8️ Funkcja, która zwraca odwrotność predykatu
-(* negate : ('a -> bool) -> 'a -> bool *)
-let negate p = ...
-
-
- Test:
-
-let isEven x = x mod 2 = 0;;
-let isOdd = negate isEven;;
-isOdd 3;;  (* true *)
-isOdd 4;;  (* false *)
-*)
-
-let isEven x = x mod 2 = 0;;
-let negate p = fun x -> if p x then false else true;; 
-let isOdd =  negate isEven;;
-let x = isOdd 3;;
-
-(*
-9️⃣ Funkcja, która zwraca funkcję warunkową
-(* choose : bool -> ('a -> 'a -> 'a)
-   jeśli true → zwróć funkcję wybierającą pierwszy argument
-   jeśli false → zwróć funkcję wybierającą drugi argument *)
-
-let choose cond = ...
-
-
-✅ Test:
-
-(choose true) 10 20;;   (* 10 *)
-(choose false) 10 20;;  (* 20 *)
-*)
-
-let choose cond = if cond then fun a b -> a else fun a b -> b;;
-
-(choose true) 10 20;;
-(choose false) 10 20;;
-
-(*
-🧩 Poziom 4 — małe kombinacje
-🔟 Napisz map używając fold_right
-(* map_v2 : ('a -> 'b) -> 'a list -> 'b list *)*)
-
-let map_v2 f xs = List.fold_right (fun x acc -> (f x) :: acc) xs [];;
-
+let rec concatLists xss = 
+    match xss with 
+    | head :: tail -> List.fold_left (fun acc x -> x :: acc) [] head 
+    |  

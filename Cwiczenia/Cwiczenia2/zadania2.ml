@@ -48,21 +48,25 @@ let root3 a =
 
 (*  zadanie 4  *)
 let [_; _; x; _; _] = [-2; -1; 0; 2; 2];;
-let [_ ; (0,_) ] = [ (1,2); (0,1) ]
+let [-2; _; x; 2; 2] = [-2; -1; 0; 2; 2];;
+let _ :: _ :: x :: _ :: _ :: [] = [-2; -1; 0; 2; 2];;
+
+let [_ ;  ] = [ (1,2); (0,1) ]
+let [(1,2) ; (x, _)] = [ (1,2); (0,1) ]
 
 let rec initSegment (xs, ys) =
   match (xs, ys) with
   | ([], _) -> true
   | (_, []) -> false
   | (h1::t1, h2::t2) when h1 = h2 -> initSegment (t1, t2)
-  | _ -> false;;
+  | _ -> false
+;;
+
 
 let rec replaceNth (list, position, elem) =
   match (list, position) with
-  | ([], _) -> []                                 
+  | ([], _) -> list                                 
   | (h :: t, 0) -> elem :: t
   | (h :: t, _) -> h :: replaceNth (t, position - 1, elem);;
-
-
 
 let test = replaceNth([1;2;3;4;5;6], 3, 10);;

@@ -19,6 +19,7 @@ let divideList list =
    | [] -> (reverse p1 ,reverse p2 , reverse p3)
    in iter (list, 0, [], [], []);;
 
+
 let t1 = divideList [5;4;3;2];;
 let t2 = divideList [1;2;3;4;5;6;7;8;9];;
 let t3 = divideList [];;

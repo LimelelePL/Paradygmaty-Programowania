@@ -1,17 +1,11 @@
-import scala.annotation.tailrec
-object test extends App{
 
-/* Napisać funkcję primes generującą listę wszystkich liczb pierwszych z przedziału [2, n].
-Wykorzystać jedynie wyrażenia for oraz List.range tzn. nie można korzystać z rekurencji,
-ani funkcjonałów. (Scala) (25pkt.) */
+def count [A] (f: A => Boolean, list: List[A]) : Int = {
+    list match
+        case head :: next => if f (head) then 1 + count(f, next) else count(f, next) 
+        case Nil => 0
+} 
 
-def generatePrimes (n : Int) : List[Int] = {
-    val allPrimes =
-        for {
-            nums <-  List.range(2,n)
-            diviso
-            } yield {
-    }
+def squaresOfEvens (xs: List[Int]) : List[Int] = {
+    (xs.filter(x => x % 2 == 0) ).map(x => x*x)
 }
-
-}
+val squares =  squaresOfEvens(List(1,2,3,4,5));;

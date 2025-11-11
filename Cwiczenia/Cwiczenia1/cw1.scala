@@ -1,6 +1,6 @@
 object cw1 extends App {
 def flatten [A] (list : List[List[A]]) : List[A] = {
-    if list == Nil then List[A]()
+    if list == Nil then Nil
     else list.head ::: flatten (list.tail)
   }
 
