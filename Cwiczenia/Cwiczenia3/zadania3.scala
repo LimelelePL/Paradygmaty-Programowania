@@ -46,7 +46,7 @@ object zadania3 extends App {
     def merge (comp: (A, A) => Boolean, result: List[A], xs: List[A], ys: List[A]): List[A] = {
         (xs, ys) match
             case (h1::t1, h2::t2) =>
-                 if (comp(h1, h2)) then merge(comp, h1::result, t1, ys)
+                 if (comp(h1, h2)|| !comp(h1,h2)) then merge(comp, h1::result, t1, ys)
                  else  merge(comp, h2::result, xs, t2)
             case ( Nil, h2::t2 ) => result.reverse ::: ys
             case ( h1::t1, Nil ) => result.reverse ::: xs

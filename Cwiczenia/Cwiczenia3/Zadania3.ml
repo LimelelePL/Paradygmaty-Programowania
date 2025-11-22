@@ -20,10 +20,17 @@ OCamla!) :
  *)
 
 
- let curry3 f a b c = f (a,b,c) ;;
+ let curry3 f a b c = f (a,b,c);;
  let curry3 = fun f -> fun a -> fun b -> fun c -> f (a,b,c);;
  let uncurry3 f(a,b,c) = f a b c;;
  let uncurry3 = fun f -> fun(a,b,c)  -> f a b c
+
+ (*Sprawdzian 2 na eportalu wrzucic*)
+ let curry4 f a b c d = f(a,b,c,d) ;; (* lukier*)
+ let curry4 = fun f-> fun a -> fun b -> fun c -> fun d -> f(a,b,c,d);; (*brak lukru*)
+ let uncurry4 f(a,b,c,d) = f a b c d;; (*lukier*)
+ let uncurry4 = fun f -> fun(a,b,c, d)  -> f a b c d;; (*brak lukru*)
+
 
  (*
  przekształć poniższą rekurencyjną definicję funkcji sumProd, która oblicza jednocześnie
@@ -36,7 +43,7 @@ OCamla!) :
    match xs with 
    | h::t -> let (s,p) = sumProd t in (h+s, h*p)
    | [] -> (0,1);;
-let sumProd xs = List.fold_left (fun accum elem -> match accum with (a,b) -> (a+ elem, elem * b )) (0,1) xs;;
+let sumProd xs = List.fold_left (fun accum elem -> match accum with (a,b) -> (a+ elem, elem * b)) (0,1) xs;;
 
 (*zadanie 4*)
 
@@ -48,7 +55,7 @@ let rec quicksort = function
  in quicksort small @ quicksort large;;
 
  (* W niektórych przypadkach poniższy algorytm nie działa poprawnie, ponieważ filtruje listy
- wraz z pivotem. W efekcie pivot z poprzedniego wywołania może trafić do listy `small` lub `large`. 
+ wraz z pivotem. W efekcie pivot z poprzedniego wywołania może trafić do listy `large`. 
 
  W poprawnym wariancie algorytmu pivot powinien być jedynie użyty do porównywania elementów
  (czyli do filtrowania), ale nie powinien znajdować się już w filtrowanej liście.
@@ -63,6 +70,8 @@ let rec quicksort' = function
  and large = List.filter (fun y -> y > x ) xs
  in quicksort' small @ (x :: quicksort' large);;
 
+ let ss = quicksort'[6;6;9];;
+
  (*Ta wersja nie działa poprawnie w przypadku list zawierających powtarzające się wartości.
  Lista `large` jest tworzona przy użyciu filtra `(fun y -> y > x)`, 
  przez co elementy równe pivotowi `x` nie trafiają ani do `small`, ani do `large`
@@ -73,7 +82,7 @@ let insertionSort comp xs =
   let rec insert xs elem =
     match xs with
     | head :: tail ->
-        if not (comp elem head) then elem :: xs
+        if comp elem head then elem :: xs
         else head :: insert tail elem
     | [] -> [elem]
   in
@@ -85,27 +94,27 @@ let insertionSort comp xs =
   sort xs []
 ;;
 
+let comp (key1, _) (key2, _) = key1 < key2;;
+let stInser = insertionSort comp [(2,'C');(1,'A'); (1,'B')];;
 
-    
 let mergeSort comp xs =
   let rec merge comp result xs ys =
-    match xs, ys with
-    | h1 :: t1, h2 :: t2 ->
-        if comp h1 h2 then
+    match (xs, ys) with
+    | (h1 :: t1, h2 :: t2) ->
+        if comp h1 h2 || not (comp h2 h1) then
           merge comp (h1 :: result) t1 ys
         else
           merge comp (h2 :: result) xs t2
-    | [], h2 :: t2 -> List.rev result @ ys
-    | h1 :: t1, [] -> List.rev result @ xs
-    | [], [] -> List.rev result
+    | ([], h2 :: t2) -> List.rev result @ ys
+    | (h1 :: t1, []) -> List.rev result @ xs
+    | ([], []) -> List.rev result
   in
-
   let partition xs =
     let rec iter xs fast slow left right =
-      match fast, slow with
-      | _h1 :: a :: b, h2 :: t2 -> iter xs b t2 (h2 :: left) (h2 :: t2)
-      | _h1 :: [], h2 :: t2 -> (List.rev left, h2 :: t2)
-      | [], h2 :: t2 -> (List.rev left, h2 :: t2)
+      match (fast, slow) with
+      | (h1 :: a :: b, h2 :: t2) -> iter xs b t2 (h2 :: left) (h2 :: t2)
+      | (h1 :: [], h2 :: t2) -> (List.rev left, h2 :: t2)
+      | ([], h2 :: t2) -> (List.rev left, h2 :: t2)
       | _ -> (List.rev left, [])
     in
     iter xs xs xs [] []
@@ -122,9 +131,11 @@ let mergeSort comp xs =
 ;;
 
 let s = mergeSort (fun a b -> a<b ) [2;4;6;3;1;2;1];;
+let s1 = mergeSort (fun a b -> a<b ) [2;4];;
+let s2 = mergeSort (fun a b -> a<b ) [2;4;6];;
+let s3 = mergeSort (fun a b -> a<b ) [2;4;6;3;1;2;1];;
+let st = mergeSort comp [(2,'C');(1,'A'); (1,'B')];;
       
-        
-
 
 
 

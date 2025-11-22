@@ -1,47 +1,34 @@
-let rec applyNTimes f x n = 
-    if n = 0 then x 
-    else applyNTimes f (f x) (n-1);;
+type eval = Num of float | Add | Sub | Mul | Div;;
 
-let z = applyNTimes (fun x-> x + x) 5 3;;
-         
+let evaluate list = 
+    let pop stack =
+        match stack with
+        | head :: tail -> (head, tail)
+        | [] -> failwith "pusty stos!"
+    in 
+    let push stack elem = elem :: stack
+in let rec helper list stack = 
+    match list with
+    | head :: tail ->
+        (
+        match head with
+            | Num number -> helper tail (push stack number)
+            | Add -> let (num1, st1) = pop stack in let (num2, st2) = pop st1
+         in helper tail (push st2 (num2 +. num1))
+            | Sub -> let (num1, st1) = pop stack in let (num2, st2) = pop st1
+         in helper tail (push st2 (num2 -. num1))
+            | Mul -> let (num1, st1) = pop stack in let (num2, st2) = pop st1
+         in helper tail (push st2 (num2 *. num1))
+            | Div -> let (num1, st1) = pop stack in let (num2, st2) = pop st1
+         in helper tail (push st2 (num2 /. num1))
+        )
+        (*jezeli nasza lista bedzie pusta oznacza to ze wszystkie operacje zostaly przetworzone i
+                    i jedynym elementem na stosie powinien być wynik wszystkich operacji *)
+        | [] -> 
+            (
+            match stack with
+            | head :: [] -> head
+            | _ -> failwith "nieprawidlowa ilosc argumentow"
+            )
 
-let map f xs = 
-   List.fold_right (fun x acc -> (f x) :: acc) xs [];;
-
-
-let t = List.fold_left (fun acc x -> acc ^ x) " " ["a";"b";"c";"d"];;
-
-(*3️Napisz funkcję count(pred, xs)
-
-która zlicza, ile elementów listy spełnia predykat pred.
-Przykład:
-count(x => x mod 2 == 0, [1;2;3;4;6]) → 3.*)
-let rec count pred xs = 
-    match xs with 
-    | head :: tail when pred head-> 1 + count pred tail
-    | head :: tail -> count pred tail
-    | [] -> 0;;
-
-let c = count (fun x -> x mod 2 = 0) [1;2;3;4;6];;
-
-(* Używając tylko map i filter, utwórz funkcję squaresOfEvens(xs)
-
-która zwraca kwadraty wszystkich liczb parzystych z listy xs.
-Przykład:
-squaresOfEvens([1;2;3;4;5]) → [4;16].*)
-
-let squaresOfEvens xs =
-    List.map (fun x -> x*x) (List.filter (fun x -> x mod 2 = 0) xs);;
-
-let k = squaresOfEvens[1;2;3;4;5];;
-
-(*Napisz funkcję concatLists(xss)
-
-która spłaszcza listę list (czyli [[1;2];[3];[4;5]] → [1;2;3;4;5])
-– ale nie używaj operatora @ ani List.concat.
-Wykorzystaj fold_left. *)
-
-let rec concatLists xss = 
-    match xss with 
-    | head :: tail -> List.fold_left (fun acc x -> x :: acc) [] head 
-    |  
+    in helper list [];;
