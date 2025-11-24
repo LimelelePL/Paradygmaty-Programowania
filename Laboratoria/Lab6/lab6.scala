@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 
 sealed trait instr
 case class Push(c: Char) extends instr
@@ -18,6 +19,14 @@ object lab6 extends App {
         elem :: st      
         }
 
+    def checkAndPop(stack: Stack) = {
+        val (elem, st) = pop(stack)
+        if (!elem.isLetter)
+             throw new IllegalArgumentException(s"ze znaku '$elem' nie mozna zrobic wielkiej/malej litery!")
+        else (elem, st)
+    }
+
+     @tailrec
     def evaluate(instrs: List[instr], stack: Stack): Stack = {
         instrs match
             case Nil => stack
@@ -25,16 +34,12 @@ object lab6 extends App {
                 head match
                     case Push(c) => evaluate(next, push(stack, c))
                     case Pop => evaluate(next, pop(stack)._2)
-                    case Upper => {
-                        val (elem, st) = pop(stack) 
-                        val upper = elem.toUpper
-                        evaluate(next, push(st, upper))
-                    }
-                    case Lower => {
-                        val (elem, st) = pop(stack) 
-                        val lower = elem.toLower
-                        evaluate(next, push(st, lower))
-                    }
+                    case Upper => 
+                        val (elem, st) = checkAndPop(stack)
+                        evaluate(next, push (st, elem.toUpper))
+                    case Lower =>
+                         val (elem, st) = checkAndPop(stack)
+                         evaluate(next, push (st, elem.toLower))
         }
         evaluate(instrs, List[Char]())
     }
@@ -43,20 +48,29 @@ object lab6 extends App {
     val test = eval(List(Push('a'), Push('b'), Upper, Pop, Push('c'), Upper))
     println(test.toString())
 
+
+    println()
+    try {
+    println("test: " + List(Push(' '), Push('5'), Upper, Pop, Push('c'), Upper).toString() )
+    val test = eval(List(Push(' '), Push('5'), Upper, Pop, Push('c'), Upper))
+    } catch {
+        case e: Exception => println (e.getMessage())
+    }
+
+
     println()
     println("test: " + List(Pop).toString() )
     try {
     val test1 = eval(List(Pop))
     } catch {
-        case e: NoSuchElementException => e.printStackTrace()
+        case e: NoSuchElementException => println (e.getMessage())
     }
 
+    try {
     println()
     println("test: " + List(Push('a'), Pop, Upper).toString() )
-    println()
-    try {
     val test2 = eval(List(Push('a'), Pop, Upper))
     } catch {
-        case e: NoSuchElementException => e.printStackTrace()
+        case e: NoSuchElementException => println (e.getMessage())
     }
 }
