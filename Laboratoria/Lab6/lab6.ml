@@ -1,5 +1,6 @@
 type graph = (int*int list) list
 
+
 let reachableCount (graph:graph) start = 
   let rec get graph elem = 
     match graph with 
@@ -7,15 +8,21 @@ let reachableCount (graph:graph) start =
       | head :: tail -> get tail elem
       | _ -> failwith ("nie zdefiniowano w grafie wierzchołka: " ^ string_of_int elem)
   in
-  let rec iter accum stack visited = 
-    match stack with 
-      | [] -> accum
-      | top :: bottom -> 
-        let (elem, neighbours) = get graph top 
-      in
-        if List.mem elem visited then iter accum bottom visited 
-        else iter (accum+1) (neighbours @ bottom) (elem :: visited)
-      in iter (0) [start] [];;
+    let rec isVisited elem list = 
+    match list with
+    | head :: tail when head = elem -> true
+    | head :: tail -> isVisited elem tail
+    | [] -> false
+  in
+    let rec iter accum queue visited = 
+      match queue with 
+        | [] -> accum
+        | top :: bottom -> 
+          let (elem, neighbours) = get graph top 
+        in
+          if isVisited elem visited then iter accum bottom visited 
+          else iter (accum+1) (bottom @ neighbours) (elem :: visited)
+        in iter (0) [start] [];;
 
       print_string("======= ZADANIE 1 =======");;
       print_newline ();;
@@ -42,12 +49,21 @@ print_newline ();;
 
 let g3: graph = [];;
 
+
 (try
    print_int (reachableCount g3 1)
  with Failure msg ->
    print_string ("Exception: " ^ msg)
 );;
 
+print_newline ();;
+
+let g4: graph = [
+  (1, [2]);
+  (2, [1]);
+];;
+
+print_int (reachableCount g4 1);;
 print_newline ();;
 
  print_newline ();;
