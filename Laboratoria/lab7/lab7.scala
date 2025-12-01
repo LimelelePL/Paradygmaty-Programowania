@@ -1,23 +1,27 @@
 object lab7 extends App {
   
-  def lwybierz [A] (lxs: LazyList[A], n : Int, m:Int) : LazyList[A] = {
-
-    def getMth (lxs: LazyList[A], m : Int): LazyList[A] = {
-        (lxs,m) match
-            case (LazyList(), _) => LazyList()
-            case (_,0) => lxs
-            case (h#::rest, _) => getMth(rest, m-1)
-    }
-    
-    def helper [A] (lxs: LazyList[A], idx: Int) : LazyList[A] = {
-            lxs match
-                case LazyList() => LazyList() 
-                case h #:: rest =>
-                     if idx % n == 0 then h #:: helper (rest, idx + 1)
-                     else helper (rest, idx + 1)
-        }
-        helper(getMth(lxs,m-1), 0)
+  def ldzialanie[A] (xs1: LazyList[A], xs2: LazyList[A], func : (A,A) => A) : LazyList[A] = {
+    (xs1, xs2) match
+      case (h1 #:: t1, h2 #:: t2) => func (h1, h2) #:: ldzialanie (t1, t2, func)
+      case (LazyList(), LazyList()) => LazyList()
+      case (LazyList(), h2 #:: t2) => h2 #:: ldzialanie (LazyList(), t2, func)
+      case (h1 #:: t1, LazyList()) => h1 #:: ldzialanie (t1, LazyList(), func)
   }
 
-  println(lwybierz(LazyList(5,6,3,2,1),2,1).force.toString())
+  println("test: ldzialanie(LazyList(1,2,3,4), LazyList(1,2,3), _ + _) ")
+  val test1 = ldzialanie(LazyList(1,2,3,4), LazyList(1,2,3), _ + _);
+  println(test1.toList.toString());
+  println("test2: ldzialanie(LazyList(a,b,c), LazyList(A,B,C), _ + _) ")
+  val test2 = ldzialanie(LazyList("a", "b", "c"), LazyList("A", "B", "C"), _ + _ )
+  println(test2.toList.toString())
+  println("test3: ldzialanie(LazyList(1,2,3), LazyList(), (a: Int, b: Int) => a - b) ")
+  val test3 = ldzialanie(LazyList(1,2,3), LazyList(), (a: Int, b: Int) => a - b)
+  println(test3.toList.toString)
+  println("test4: ldzialanie(LazyList(), LazyList(), (a: Int, b: Int) => a * b) ")
+  val test4 = ldzialanie(LazyList(), LazyList(), (a:Int, b:Int) => a * b)
+  println(test4.toList.toString)
+  println("test5:val test5 = ldzialanie(LazyList.from(1), LazyList.from(1), (a:Int, b:Int) => a+b+1)")
+  val test5 = ldzialanie(LazyList.from(1), LazyList.from(1), (a:Int, b:Int) => a+b+1)
+  println(test5.take(10).toList.toString())
+
 }
