@@ -21,7 +21,7 @@ object lab7 extends App {
   val test4 = ldzialanie(LazyList(), LazyList(), (a:Int, b:Int) => a * b)
   println(test4.toList.toString)
   println("test5:val test5 = ldzialanie(LazyList.from(1), LazyList.from(1), (a:Int, b:Int) => a+b+1)")
-  val test5 = ldzialanie(LazyList.from(1), LazyList.from(1), (a:Int, b:Int) => a+b+1)
+  val test5 = ldzialanie(LazyList.from(1), LazyList.from(1), (a:Int, b:Int) => a/b)
   println(test5.take(10).toList.toString())
 
 }

@@ -13,33 +13,26 @@ let rec ltake (n, lxs) =
 match (n, lxs) with
 (0, _) -> []
 | (_, LNil) -> []
-| (n, LCons(x,xf)) -> x::ltake(n-1, Lazy.force xf)
+| (n, LCons(x, lazy xf)) -> x::ltake(n-1, xf)
 ;;
 
 let lWybierz xs m n = 
     if n <= 0 then LNil else
-    let rec getMthElem xs m = 
-        match (m, xs) with 
-        (*jezeli m zero lub ujemne to zaczyamy od początku listy*)
-            | (m, _) when m <= 0 -> xs 
-            | (_, LCons (head, tail)) -> getMthElem (Lazy.force tail) (m-1)
-            | (_, LNil) -> LNil
-    in 
     let rec skipN xs n = 
         match (n, xs) with
-        | (0, LCons(head, tail)) -> xs
-        | (_, LCons(head, tail)) -> skipN (Lazy.force tail) (n-1)
         | (_, LNil) -> LNil
+        | (m, _) when m <= 0 -> xs
+        | (_, LCons(head, lazy tail)) -> skipN (tail) (n-1)
     in 
         let rec process xs = 
             match xs with
-            | LCons(head, tail) -> LCons (head, lazy (process (skipN (Lazy.force tail) (n-1))))
+            | LCons(head, lazy tail) -> LCons (head, lazy (process (skipN (tail) (n-1))))
             | LNil -> LNil
-        in process (getMthElem xs (m-1));;
+        in process (skipN xs (m-1));;
 
 (*test zwykła lista*)
-let l1 = toLazyList [1;2;3;4;5;6;7;8];;
-let test1 = ltake (1,(lWybierz l1 2 2));;
+let l1 = toLazyList [5;6;3;2;1];;
+let test1 = ltake (3,(lWybierz l1 1 2));;
 
 (*test nieskonczona lista*)
 let l2 = gen 4
@@ -55,7 +48,7 @@ let test4 = ltake (5,(lWybierz l4 2 2));;
 
 (* test ujemne m*)
 let l5 = toLazyList [1;2];;
-let test5 = ltake (5,(lWybierz l5 (-3) 10));;
+let test5 = ltake (5,(lWybierz l5 (-3) 1));;
 
 (*test n wieksze niz ilosc elementow w liscie*)
 let l6 = toLazyList [1;2];;
